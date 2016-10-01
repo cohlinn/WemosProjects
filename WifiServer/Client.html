@@ -1,0 +1,45 @@
+<script language='Javascript'> 
+var stopLoop = true; 
+var timeoutId=0; 
+
+function callReadImu() 
+{ 
+ // alert('In callReadImu...'); 
+  var xhttp = new XMLHttpRequest(); 
+  xhttp.onreadystatechange = writeImu; 
+  xhttp.open('GET', 'http://192.168.4.1/readImu', true); 
+  xhttp.send(); 
+} 
+
+function writeImu() 
+{ 
+	if (this.readyState == 4 && this.status == 200) 
+    {
+		var result = this.responseText; 
+        var current = document.getElementById('data').innerHTML; 
+        document.getElementById("data").innerHTML = "<pre>" + result + "</pre>" + current; 
+	} 
+}
+  
+function callStart() 
+{ 
+  stopLoop = false; 
+  for(i=0; i<100 && !stopLoop; i++) 
+  {
+	callReadImu();
+  } 
+}
+
+function callStop() 
+{
+	stopLoop = true;
+	window.clearTimeout(timeoutId);
+} 
+ 
+</script> 
+<body>
+	<b>Wemos Wifi Server and IMU test</b> 
+	<p><a href="javascript:callStart()">Start IMU</a> 
+	<p><a href="javascript:callStop()">Stop IMU</a> 
+	<div name='data' id="data"></div>
+</body> 
