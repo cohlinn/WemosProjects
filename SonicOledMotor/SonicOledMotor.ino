@@ -13,8 +13,9 @@ SSD1306  display(0x3c, D3, D5); //D3=SDA, D5=SCL
 int MOTORPIN2 = D2;
 int MOTORPIN1 = D1;
 
-int LED_PIN = D4;
+int UPPIN = D8;
 int value = 0;
+int stopflag = LOW;
 
 void setup() {
   // put your setup code here, to run once:
@@ -29,21 +30,21 @@ void setup() {
   drawWifi();
   display.display();
   
-   pinMode(LED_PIN, OUTPUT);
-   digitalWrite(LED_PIN, LOW);
+   pinMode(UPPIN, INPUT);
+
 
    //Motor section
    pinMode(MOTORPIN1, OUTPUT);
    pinMode(MOTORPIN2, OUTPUT);
+   digitalWrite(MOTORPIN1, LOW);
+   digitalWrite(MOTORPIN2, LOW);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   yield();
 
-  digitalWrite(LED_PIN, HIGH);
   value = sonar.ping_cm();
-  digitalWrite(LED_PIN, LOW);
 
   Serial.print("Ping: ");
   Serial.print(value); // Send ping, get distance in cm and print result (0 = outside set distance range)
@@ -54,11 +55,21 @@ void loop() {
   display.display();
 
   //motor section
-  if(value <30)
-    moveDown(5);
-  else moveUp(5);
+  int stopflag = digitalRead(UPPIN);
+  Serial.println("Button = "+stopflag);
+  if(stopflag == LOW)
+  {
+    if(value <30)
+      moveDown(5);
+    else moveUp(5);
+  } 
+  else
+  {
+     digitalWrite(MOTORPIN1, LOW);
+     digitalWrite(MOTORPIN2, LOW);
+  }
   
-   delay(1000);
+   //delay(1000);
 }
 
 void moveDown(int value)
