@@ -13,6 +13,8 @@ SSD1306  display(0x3c, D3, D4); //D3=SDA, D5=SCL
 
 
 int LED_PIN = D4;
+int RED_LED = D0;
+int GRN_LED = D5;
 int value = 0;
 
 void setup() {
@@ -29,7 +31,11 @@ void setup() {
   display.display();
   
    pinMode(LED_PIN, OUTPUT);
+   pinMode(RED_LED, OUTPUT);
+   pinMode(GRN_LED, OUTPUT);
    digitalWrite(LED_PIN, LOW);
+   digitalWrite(RED_LED, LOW);
+   digitalWrite(GRN_LED, LOW);
 }
 
 void loop() {
@@ -44,6 +50,16 @@ void loop() {
   Serial.print(value); // Send ping, get distance in cm and print result (0 = outside set distance range)
   Serial.println(" cm");
 
+  if(value > 10)
+  {
+    digitalWrite(GRN_LED, HIGH);
+    digitalWrite(RED_LED, LOW);
+  }
+  else
+  {
+    digitalWrite(RED_LED, HIGH);
+    digitalWrite(GRN_LED, LOW);
+  }
   display.clear();
   drawOledText(value);
   display.display();
