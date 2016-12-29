@@ -13,7 +13,6 @@ void setup() {
 
   Serial.begin(115200);
   
-  // put your setup code here, to run once:
   display.init();
   display.flipScreenVertically();
   display.setFont(ArialMT_Plain_10);
@@ -25,27 +24,28 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  // get value from IR photodiode (0 - 1023)
   value = analogRead(sensorPin);
+  //display if only there are changes to the new value.
   if(value != lastvalue)
-  {
+  {//display on oled screen
     display.clear();
     drawOledText(lastvalue, value);
     display.display();
-
+    //display on serial monitor
     Serial.println(value);
   }
   lastvalue = value;
-  delay(100);
+ // delay(100); //if you want a slower reaction, add delay here.
 }
 
 void drawOledText(int prev, int value) {
     // create more fonts at http://oleddisplay.squix.ch/
     display.setTextAlignment(TEXT_ALIGN_LEFT);
     display.setFont(ArialMT_Plain_16);
-    display.drawString(0, 0, "Wemos Cathy-01");
+    display.drawString(0, 0, "Wemos IR tester");
     display.setFont(ArialMT_Plain_10);
-    display.drawString(0, 24, String(prev));
+    display.drawString(0, 24, String(prev)) ;
     display.setFont(ArialMT_Plain_16);
     display.drawString(0, 35, String(value));
 }
