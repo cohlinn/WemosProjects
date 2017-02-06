@@ -3,8 +3,8 @@
 #include "images.h" //WIFI logo
 #include <NewPing.h>
 
-#define TRIGGER_PIN  D1  // Arduino pin tied to trigger pin on the ultrasonic sensor.
-#define ECHO_PIN     D2  // Arduino pin tied to echo pin on the ultrasonic sensor.
+#define TRIGGER_PIN  D6  // Arduino pin tied to trigger pin on the ultrasonic sensor.
+#define ECHO_PIN     D7  // Arduino pin tied to echo pin on the ultrasonic sensor.
 #define MAX_DISTANCE 400 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 
@@ -14,6 +14,8 @@ SSD1306  display(0x3c, D3, D4); //D3=SDA, D5=SCL
 
 int LED_PIN = D4;
 int value = 0;
+int sonic_VCC = D5;
+int sonic_GND = D8;
 
 void setup() {
   // put your setup code here, to run once:
@@ -30,6 +32,10 @@ void setup() {
   
    pinMode(LED_PIN, OUTPUT);
    digitalWrite(LED_PIN, LOW);
+   pinMode(sonic_VCC, OUTPUT);
+   pinMode(sonic_GND, OUTPUT);
+   digitalWrite(sonic_VCC, HIGH);
+   digitalWrite(sonic_GND, LOW);
 }
 
 void loop() {
