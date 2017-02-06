@@ -1,5 +1,6 @@
 int mPin1 = D1;
 int mPin2 = D2;
+int mSpeed = D3;
 
 void setup() 
 {
@@ -9,6 +10,8 @@ void setup()
   pinMode(mPin2, OUTPUT);
   digitalWrite(mPin1, LOW);
   digitalWrite(mPin2, LOW);
+  //set speed
+  analogWrite(mSpeed, 700);
 }
 
 void loop() {
@@ -21,7 +24,7 @@ void loop() {
   digitalWrite(mPin2, HIGH);
   delay(1000);
   Serial.println("Stop");
-  digitalWrite(mPin1, HIGH);
-  digitalWrite(mPin2, HIGH);
+  digitalWrite(mPin1, LOW);
+  digitalWrite(mPin2, LOW);
   delay(1000);
 }
