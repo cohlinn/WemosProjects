@@ -1,3 +1,6 @@
+#define LED1  D7
+#define LED2  D8
+
 int mA1 = D1;
 int mA2 = D2;
 int mB1 = D5;
@@ -12,6 +15,8 @@ void setup()
   pinMode(mA2, OUTPUT);
   pinMode(mB1, OUTPUT);
   pinMode(mB2, OUTPUT);
+  pinMode(LED1, OUTPUT);
+  pinMode(LED2, OUTPUT);
   digitalWrite(mA1, LOW);
   digitalWrite(mA2, LOW);
   digitalWrite(mB1, LOW);
@@ -46,6 +51,8 @@ void moveFwd()
   digitalWrite(mA2, LOW);
   digitalWrite(mB1, HIGH);
   digitalWrite(mB2, LOW);
+  digitalWrite(LED1, HIGH);
+  digitalWrite(LED2, HIGH);
 }
 
 void moveBwd()
@@ -54,6 +61,8 @@ void moveBwd()
   digitalWrite(mA2, HIGH);
   digitalWrite(mB1, LOW);
   digitalWrite(mB2, HIGH);
+  digitalWrite(LED1, LOW);
+  digitalWrite(LED2, LOW);
 }
 
 void moveRight()
@@ -62,6 +71,8 @@ void moveRight()
   digitalWrite(mA2, LOW);
   digitalWrite(mB1, LOW);
   digitalWrite(mB2, HIGH);
+  digitalWrite(LED1, HIGH);
+  digitalWrite(LED2, LOW);
 }
 
 void moveLeft()
@@ -70,6 +81,8 @@ void moveLeft()
   digitalWrite(mA2, HIGH);
   digitalWrite(mB1, HIGH);
   digitalWrite(mB2, LOW);
+  digitalWrite(LED1, LOW);
+  digitalWrite(LED2, HIGH);
 }
 
 void moveStop()
@@ -78,4 +91,7 @@ void moveStop()
   digitalWrite(mA2, LOW);
   digitalWrite(mB1, LOW);
   digitalWrite(mB2, LOW);
+  digitalWrite(LED1, HIGH);
+  digitalWrite(LED2, HIGH);
+
 }
