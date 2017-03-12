@@ -34,7 +34,7 @@ String AP_NameString;
 boolean APMODE = false; //false = connect to Wifi, true = setup Wifi Access Point (IP=192.168.4.1)
 //config for public wifi
 const char ssid[] = "PrototypingLab";
-const char password[] = "OMG188969";
+const char password[] = "xxxx";
 
 
 int mR1 = D5;
@@ -42,8 +42,8 @@ int mR2 = D6;
 int mL1 = D1;
 int mL2 = D2;
 int mSpeed = A0;
-#define LED1  D7
-#define LED2  D8
+#define APPIN  D7 //HIGH=AP, LOW=WIFI
+
 int currSpeed = 600;
 String mStatus = "Status.....";
 
@@ -64,8 +64,9 @@ void setup()
   analogWrite(mSpeed, 0); //0 - 1023 speed. 0 - stop
   mStatus = "Stop";
 
-    // Initialising the UI will init the display too.
-
+    // Initialising the UI will init the display too.\
+    pinMode(APPIN, INPUT);
+  (digitalRead(APPIN)==HIGH)? APMODE=true: APMODE=false;
   display.init();
   display.flipScreenVertically();
   display.setFont(ArialMT_Plain_10);
@@ -90,9 +91,9 @@ void loop() {
 // Check if a client has connected
   server.handleClient();
 
-  display.clear();
-  drawOledText(mStatus);
-  display.display();
+//  display.clear();
+//  drawOledText(mStatus);
+//  display.display();
 //  Serial.println(mStatus);
 
 }
@@ -134,6 +135,13 @@ void setupWiFi()
      Serial.println("WiFi connected");  
      Serial.println("IP address: ");
      Serial.println(WiFi.localIP());
+      display.clear();
+    display.setTextAlignment(TEXT_ALIGN_LEFT);
+    display.setFont(ArialMT_Plain_16);
+    display.drawString(0, 0, "Wemos "+WiFi.localIP());
+    display.setFont(ArialMT_Plain_10);
+
+     display.display();
   }
 }
 
