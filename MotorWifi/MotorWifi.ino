@@ -1,5 +1,10 @@
+
+
+
+
 #include <Wire.h>
-#include "SSD1306.h" // alias for `#include "SSD1306Wire.h"`
+#include "SSD1306.h" // alias for `#include "SSD1306Wire.h"
+//https://github.com/squix78/esp8266-oled-ssd1306
 #include "images.h" //WIFI logo
 //#include <NewPing.h>
 //
@@ -28,8 +33,8 @@ ESP8266WebServer server(80);
 String AP_NameString;
 boolean APMODE = false; //false = connect to Wifi, true = setup Wifi Access Point (IP=192.168.4.1)
 //config for public wifi
-const char ssid[] = "pepsi wifi";
-const char password[] = "Gandalf3062";
+const char ssid[] = "PrototypingLab";
+const char password[] = "OMG188969";
 
 
 int mR1 = D5;
