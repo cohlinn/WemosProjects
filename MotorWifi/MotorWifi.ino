@@ -3,18 +3,18 @@
 
 
 #include <Wire.h>
-#include "SSD1306.h" // alias for `#include "SSD1306Wire.h"
+//#include "SSD1306.h" // alias for `#include "SSD1306Wire.h"
 //https://github.com/squix78/esp8266-oled-ssd1306
 #include "images.h" //WIFI logo
-//#include <NewPing.h>
-//
-//#define TRIGGER_PIN  D6  // Arduino pin tied to trigger pin on the ultrasonic sensor.
-//#define ECHO_PIN     D7  // Arduino pin tied to echo pin on the ultrasonic sensor.
-//#define MAX_DISTANCE 400 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
-//NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
-//
+#include <NewPing.h>
+
+#define TRIGGER_PIN  D3  // Arduino pin tied to trigger pin on the ultrasonic sensor.
+#define ECHO_PIN     D4  // Arduino pin tied to echo pin on the ultrasonic sensor.
+#define MAX_DISTANCE 300 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
+
 //// Initialize the OLED display using Wire library
-SSD1306  display(0x3c, D3, D4); //D3=SDA, D4=SCL
+//SSD1306  display(0x3c, D3, D4); //D3=SDA, D4=SCL
 
 
 
@@ -46,6 +46,7 @@ int mSpeed = A0;
 
 int currSpeed = 600;
 String mStatus = "Status.....";
+boolean autoFlag = false; //Start with stationary
 
 void setup() 
 {
@@ -64,17 +65,19 @@ void setup()
   analogWrite(mSpeed, 0); //0 - 1023 speed. 0 - stop
   mStatus = "Stop";
 
-    // Initialising the UI will init the display too.\
-    pinMode(APPIN, INPUT);
+  //Decide to connect to WIFI router or turn self into WIFI router
+  pinMode(APPIN, INPUT);
   (digitalRead(APPIN)==HIGH)? APMODE=true: APMODE=false;
-  display.init();
+
+    // Initialising the UI will init the display too.
+/*  display.init();
   display.flipScreenVertically();
   display.setFont(ArialMT_Plain_10);
     // clear the display
   display.clear();
   drawWifi();
   display.display();
-  
+ */ 
     //Setup Wifi AP
   setupWiFi();
   server.on("/", handleRoot);
@@ -83,13 +86,36 @@ void setup()
   server.on("/right", handleRight);
   server.on("/left", handleLeft);
   server.on("/stop", handleStop);
+  server.on("/auto", handleAuto);
   server.begin();
   Serial.println("HTTP server started");
 }
 
+int dist;
+#define MIN_DIST 20
 void loop() {
 // Check if a client has connected
   server.handleClient();
+  if(autoFlag)
+  {
+    dist = sonar.ping_cm();
+    if(dist > MIN_DIST)
+      moveFwd();
+    else
+    {
+      int start = millis();
+      int lapse = 0;
+      while(dist<=MIN_DIST && lapse < 2000) //find direction to move, or give up after 2 seconds
+      {
+        moveLeft();
+        delay(100);
+        dist = sonar.ping_cm();
+        lapse = millis() - start;
+      }
+      moveStop();
+      //sound trapped alarm
+    }
+  }
 
 //  display.clear();
 //  drawOledText(mStatus);
@@ -125,23 +151,25 @@ void setupWiFi()
   }
   else
   {
-     WiFi.begin(ssid, password);
-     while (WiFi.status() != WL_CONNECTED) 
-     {
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) 
+    {
       delay(500);
       Serial.print(".");
-     }
-     Serial.println("");
-     Serial.println("WiFi connected");  
-     Serial.println("IP address: ");
-     Serial.println(WiFi.localIP());
-      display.clear();
+    }
+    Serial.println("");
+    Serial.println("WiFi connected");  
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+
+/*
+    display.clear();
     display.setTextAlignment(TEXT_ALIGN_LEFT);
     display.setFont(ArialMT_Plain_16);
     display.drawString(0, 0, "Wemos "+WiFi.localIP());
     display.setFont(ArialMT_Plain_10);
-
-     display.display();
+    display.display();
+*/
   }
 }
 
@@ -158,70 +186,98 @@ void handleRoot() {
     + "<p><a href='/left'><button type='button' value='Left'>Left</button></a>"
     +    "<a href='/right'><button type='button' value='Right'>Right</button></a></p>"
     + "<p><a href='/back'><button type='button' value='back'>Back</button></a></p>"
-    + "<p><a href='/stop'><button type='button' value='Stop'>Stop</button></a></p>");
+    + "<p><a href='/stop'><button type='button' value='Stop'>Stop</button></a></p>"
+    + "<p><a href='/auto'><button type='button' value='Auto'>Auto Move</button></a></p>");
 }
+
+
+void handleAuto() 
+{
+  //return no content
+  server.send(204, MIME_TEXT, "Auto");
+  Serial.println("Auto");
+  autoFlag=true;
+}
+
 
 void handleFwd() 
 {
+  moveFwd();
   //return no content
   server.send(204, MIME_TEXT, "Forward");
+}
+void moveFwd()
+{
   Serial.println("Forward");
   digitalWrite(mR1, HIGH);
   digitalWrite(mR2, LOW);
   digitalWrite(mL1, HIGH);
   digitalWrite(mL2, LOW);
   analogWrite(mSpeed, currSpeed);
+
 }
 
 void handleBack() 
 {
-  //return no content
-  server.send(204, MIME_TEXT, "");
   Serial.println("Back");
   digitalWrite(mR1, LOW);
   digitalWrite(mR2, HIGH);
   digitalWrite(mL1, LOW);
   digitalWrite(mL2, HIGH);
   analogWrite(mSpeed, currSpeed);
+  //return no content
+  server.send(204, MIME_TEXT, "");
 }
 
 void handleLeft() 
 {
+  moveLeft();
   //return no content
   server.send(204, MIME_TEXT, "");
+}
+
+void moveLeft()
+{
   Serial.println("Left");
   digitalWrite(mR1, HIGH);
   digitalWrite(mR2, LOW);
   digitalWrite(mL1, LOW);
   digitalWrite(mL2, HIGH);
-  analogWrite(mSpeed, currSpeed);
+  analogWrite(mSpeed, currSpeed);  
 }
 
 void handleRight() 
 {
-  //return no content
-  server.send(204, MIME_TEXT, "");
   Serial.println("Right");
   digitalWrite(mR1, LOW);
   digitalWrite(mR2, HIGH);
   digitalWrite(mL1, HIGH);
   digitalWrite(mL2, LOW);
   analogWrite(mSpeed, currSpeed);
+  //return no content
+  server.send(204, MIME_TEXT, "");
 }
 
 void handleStop() 
 {
+  moveStop();
   //return no content
   server.send(204, MIME_TEXT, "");
+}
+
+void moveStop()
+{
+  autoFlag = false;
   Serial.println("Stop");
   analogWrite(mSpeed, 0);
   digitalWrite(mR1, LOW);
   digitalWrite(mR2, LOW);
   digitalWrite(mL1, LOW);
-  digitalWrite(mL2, LOW);
+  digitalWrite(mL2, LOW); 
 }
 
 
+/* //Draw on screen
 void drawOledText(String value) {
     // create more fonts at http://oleddisplay.squix.ch/
     display.setTextAlignment(TEXT_ALIGN_LEFT);
@@ -238,4 +294,4 @@ void drawWifi() {
     // on how to create xbm files
     display.drawXbm(34, 14, WiFi_Logo_width, WiFi_Logo_height, WiFi_Logo_bits);
 }
-
+*/
