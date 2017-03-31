@@ -92,7 +92,7 @@ void setup()
 }
 
 int dist;
-#define MIN_DIST 20
+#define MIN_DIST 10
 void loop() {
 // Check if a client has connected
   server.handleClient();
@@ -105,14 +105,17 @@ void loop() {
     {
       int start = millis();
       int lapse = 0;
-      while(dist<=MIN_DIST && lapse < 2000) //find direction to move, or give up after 2 seconds
+      while(dist<=MIN_DIST && lapse < 10000) //find direction to move, or give up after 2 seconds
       {
         moveLeft();
         delay(100);
         dist = sonar.ping_cm();
         lapse = millis() - start;
       }
-      moveStop();
+      
+      
+      if(dist<=MIN_DIST )
+        moveStop();
       //sound trapped alarm
     }
   }
