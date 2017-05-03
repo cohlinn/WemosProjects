@@ -9,80 +9,79 @@ Adafruit_NeoPixel neopix(NUM_PIXELS, NEOPIXEL_PIN, NEO_RGB | NEO_KHZ800);
 //Parameters for Solid display
 #define SOLID_LIST_LEN 7
 byte solidColours[SOLID_LIST_LEN][3] = 
-  {
-    {0x10,0x10,0x10},
-    {0x00,0x10,0x10},
-    {0x00,0x00,0x10},
-    {0x00,0x10,0x00},
-    {0x10,0x00,0x00},
-    {0x10,0x10,0x00},
-    {0x10,0x00,0x10}
+  { //G R B
+    {0x00,0x00,0x00}, //off
+    {0x00,0x00,0xDF}, //blue
+    {0x00,0xDF,0x00}, //red
+    {0xA0,0xA0,0x10}, //yellow
+    {0xDF,0x00,0x10}, //green
+    {0x00,0xA0,0xA5}, //purple
+    {0xA0,0xA0,0xA0} //white
   };
 int solidIndex=0;
 
-//TO BE MODIFIED according to need
-//Parameters for Gradual display
-byte gradColours[NUM_PIXELS][4];
-int gHead = 0;
+#define SWITCH D5
+#define BUTTON D7
+
+boolean SW_ON = true;
+boolean B_PRESS = false;
 
 void setup() 
 {
   Serial.begin(115200);
   neopix.begin();
-//
-//  //SolidColour sections
-//  solidIndex=0;
-//
-//  //GradualColour sections
-//  gHead=0;
-//  setupGradPixels(NUM_PIXELS, 0x00, 0x00, 0x00);
-//
-//  //Setup MRT lights (4 white, the rest blue)
-//  setupGradPixels(NUM_PIXELS, 0x05, 0x05, 0x0a);
-//  for(int i=0; i<4; i++)
-//    setGradPixel(i, 0x05, 0x05, 0x05);
+
   for(int i=0; i<NUM_PIXELS; i++)
   {
-    setColor(i,0x05, 0x00, 0xDF);
+    setColor(i,solidColours[solidIndex][0], solidColours[solidIndex][1], solidColours[solidIndex][2]);
   }
 
   neopix.show();
+
+  pinMode(SWITCH, INPUT);
+  pinMode(BUTTON, INPUT);
 }
 
 void loop() 
 {
-Serial.println(".....");
-  
-  delay(5000);
-}
+  Serial.println(".....");  
 
-//==== Gradual Colour section
-void gradColorCycle()
-{
- int j = gHead;
-  for(int i=0; i<NUM_PIXELS; i++, j++)
-  {//i=neopixel position, j=colour to assign to that pixel from gradColours
-    j = j % NUM_PIXELS;
-    setColor(i,gradColours[j][0], gradColours[j][1], gradColours[j][2]);
+  if(digitalRead(SWITCH) && !SW_ON) //SW=ON, previously OFF
+  { //turn on
+    setStrip(solidIndex);
+    neopix.show();
+    SW_ON = true;
   }
-  gHead = abs(gHead+1) % NUM_PIXELS;
-}
-
-
-void setupGradPixels(int numpixels, byte r, byte g, byte b)
-{
-  for(int i=0; i<numpixels; i++)
+  else if(!digitalRead(SWITCH) && SW_ON) //switch off
+  { //turn off
+    setStrip(0);
+    neopix.show();
+    SW_ON = false;
+  }
+  else if(SW_ON && digitalRead(BUTTON) && !B_PRESS) //press button
+  { //change colour
+    solidIndex++;
+    setStrip(solidIndex);
+    neopix.show();
+    B_PRESS = true;
+  }
+  else if(!digitalRead(BUTTON) && B_PRESS) //let go button
   {
-    setGradPixel(i, r, g, b);
+    B_PRESS = false;
+  }
+
+  delay(1000);
+}
+
+
+void setStrip(int colour)
+{
+  for(int i=0; i<NUM_PIXELS; i++)
+  {
+    setColor(i,solidColours[colour][0], solidColours[colour][1], solidColours[colour][2]);
   }
 }
 
-void setGradPixel(int pos, byte r, byte g, byte b)
-{
-  gradColours[pos][0] = r;
-  gradColours[pos][1] = g;
-  gradColours[pos][2] = b;
-}
 
 
 //======== Common functions
