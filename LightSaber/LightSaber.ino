@@ -1,6 +1,6 @@
 #include <Adafruit_NeoPixel.h>
 
-#define NUM_PIXELS 50
+#define NUM_PIXELS 120
 #define NEOPIXEL_PIN D1
 Adafruit_NeoPixel neopix(NUM_PIXELS, NEOPIXEL_PIN, NEO_RGB | NEO_KHZ800);
 //Adafruit_NeoPixel neopix(NUM_PIXELS, NEOPIXEL_PIN, NEO_RGBW | NEO_KHZ800);
