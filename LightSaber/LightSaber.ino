@@ -1,22 +1,30 @@
+/**
+ * TODO: 
+ * Add web interface to change colour
+ * Add Rainbow colour scheme
+ * Add flickering fire effect
+ */
 #include <Adafruit_NeoPixel.h>
 
-#define NUM_PIXELS 120
+#define NUM_PIXELS 103
 #define NEOPIXEL_PIN D1
 Adafruit_NeoPixel neopix(NUM_PIXELS, NEOPIXEL_PIN, NEO_RGB | NEO_KHZ800);
 //Adafruit_NeoPixel neopix(NUM_PIXELS, NEOPIXEL_PIN, NEO_RGBW | NEO_KHZ800);
 
 //TO BE MODIFIED according to need
 //Parameters for Solid display
+
 #define SOLID_LIST_LEN 7
+byte offColour[3] = {0x00, 0x00, 0x00};
 byte solidColours[SOLID_LIST_LEN][3] = 
   { //G R B
-    {0x00,0x00,0x00}, //off
-    {0x00,0x00,0xDF}, //blue
-    {0x00,0xDF,0x00}, //red
-    {0xA0,0xA0,0x10}, //yellow
-    {0xDF,0x00,0x10}, //green
-    {0x00,0xA0,0xA5}, //purple
-    {0xA0,0xA0,0xA0} //white
+    {0x1F,0x00,0x00}, //green
+    {0x00,0x00,0x1F}, //blue
+    {0x00,0x1F,0x00}, //red
+    {0x0F,0x0F,0x00}, //yellow
+    {0x0F,0x00,0x05}, //blue-green
+    {0x00,0x0F,0x0F}, //purple
+    {0x0F,0x0F,0x0F} //white
   };
 int solidIndex=0;
 
@@ -44,22 +52,27 @@ void setup()
 
 void loop() 
 {
+  yield();
   Serial.println(".....");  
 
   if(digitalRead(SWITCH) && !SW_ON) //SW=ON, previously OFF
   { //turn on
+    Serial.println("Turning on");
+    solidIndex++;
     setStrip(solidIndex);
     neopix.show();
     SW_ON = true;
   }
   else if(!digitalRead(SWITCH) && SW_ON) //switch off
   { //turn off
-    setStrip(0);
+    Serial.println("Turning off");  
+    setStripOff();
     neopix.show();
     SW_ON = false;
   }
   else if(SW_ON && digitalRead(BUTTON) && !B_PRESS) //press button
   { //change colour
+    Serial.println("Change next colour");  
     solidIndex++;
     setStrip(solidIndex);
     neopix.show();
@@ -67,21 +80,34 @@ void loop()
   }
   else if(!digitalRead(BUTTON) && B_PRESS) //let go button
   {
+    Serial.println("Release button. No action required.");  
     B_PRESS = false;
   }
-
+  yield();
   delay(1000);
 }
 
 
 void setStrip(int colour)
 {
+  if(colour >= SOLID_LIST_LEN)
+  {
+    solidIndex = 0;
+    colour = 0;
+  }
   for(int i=0; i<NUM_PIXELS; i++)
   {
     setColor(i,solidColours[colour][0], solidColours[colour][1], solidColours[colour][2]);
   }
 }
 
+void setStripOff()
+{
+  for(int i=0; i<NUM_PIXELS; i++)
+  {
+    setColor(i,offColour[0], offColour[1], offColour[2]);
+  }
+}
 
 
 //======== Common functions
