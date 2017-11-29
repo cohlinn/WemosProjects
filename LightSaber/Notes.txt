@@ -1,1 +1,13 @@
 A typical lightsaber usually consists of a metal hilt (usually around 11 inches (28 cm) in length) that projects a brightly lit energy blade (usually around 3 feet (91 cm) in length).
+
+Set Decorator Roger Christian found the handles for the Graflex Flash Gun in a photography shop in Great Marlborough Street, in London's West End. He then added cabinet T-track to the handles, securely attaching them with cyanoacrylate glue. Adding a few "greebles" (surface details), Christian managed to hand-make the first prototype of a lightsaber prop for Luke before production began. George Lucas decided he wanted to add a clip to the handle, so that Luke could hang it on his belt. 
+
+Those are the most common diameters for the handgrip area on the sabers. Then various features can be narrower or thicker.
+Obi-Wan ANH, Luke ANH/ESB, Vader ANH/ESB/ROTJ: 1 1/2" = 38 mm.
+Most sabers in the prequels https://github.com/cohlinnand Luke ROTJ (Hero version): around 1 3/8" = 35 mm.
+Anakin AOTC: 1 1/4" ~= 32 mm.
+
+Hilt = W x 35 mm, L x 28 cm
+Blade = W x 25 mm, L x 90 cm
+Knobs = on/off, length, thickness?
+
