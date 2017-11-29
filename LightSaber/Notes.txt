@@ -9,8 +9,10 @@ Anakin AOTC: 1 1/4" ~= 32 mm.
 
 Based on the plethora of lightsaber I've collected, both OT and Prequel-era.. The length is typically between 10-12", with a "main" width between 1 1/4" to 1 1/2". By "main width" I mean the size of the main body of the lightsaber. For example, the Luke ANH saber's main hilt was 1.5" in diameter, but there's added diameter to the grips, activation box, etc. The Obi-Wan TPM/AOTC saber has a main diameter of 1.25" where the grips are, but the emitter section goes up to 1.5". Little variations, etc. But somewhere in that general range
 
-Hilt = W x 30-35 mm, L x 28 cm
-Blade = W x 25 mm, L x 90 cm
+http://lightsaberacademy.com/light-sabers-blades/
+
+Hilt = W x 30-35 mm, L x 22-28 cm (wrist to elbow) = 35 x 220
+Blade = W x 20-25 mm, L x 90 cm = 20x?
 Knobs = on/off, length, thickness?
 
 Materials:
