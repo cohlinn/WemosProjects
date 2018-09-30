@@ -1,0 +1,22 @@
+A typical lightsaber usually consists of a metal hilt (usually around 11 inches (28 cm) in length) that projects a brightly lit energy blade (usually around 3 feet (91 cm) in length).
+
+Set Decorator Roger Christian found the handles for the Graflex Flash Gun in a photography shop in Great Marlborough Street, in London's West End. He then added cabinet T-track to the handles, securely attaching them with cyanoacrylate glue. Adding a few "greebles" (surface details), Christian managed to hand-make the first prototype of a lightsaber prop for Luke before production began. George Lucas decided he wanted to add a clip to the handle, so that Luke could hang it on his belt. 
+
+Those are the most common diameters for the handgrip area on the sabers. Then various features can be narrower or thicker.
+Obi-Wan ANH, Luke ANH/ESB, Vader ANH/ESB/ROTJ: 1 1/2" = 38 mm.
+Most sabers in the prequels and Luke ROTJ (Hero version): around 1 3/8" = 35 mm.
+Anakin AOTC: 1 1/4" ~= 32 mm.
+
+Based on the plethora of lightsaber I've collected, both OT and Prequel-era.. The length is typically between 10-12", with a "main" width between 1 1/4" to 1 1/2". By "main width" I mean the size of the main body of the lightsaber. For example, the Luke ANH saber's main hilt was 1.5" in diameter, but there's added diameter to the grips, activation box, etc. The Obi-Wan TPM/AOTC saber has a main diameter of 1.25" where the grips are, but the emitter section goes up to 1.5". Little variations, etc. But somewhere in that general range
+
+http://lightsaberacademy.com/light-sabers-blades/
+
+Hilt = W x 30-35 mm, L x 22-28 cm (wrist to elbow) = 35 x 220
+Blade = W x 20-25 mm, L x 90 cm = 20x?
+Knobs = on/off, length, thickness?
+
+Materials:
+Blade - Polycarbonate, acrylic, 3-5W LED x1, Neopixel 144/m x2m strip, APA106 F8 LEDs x125 units (WS2812B)
+Hilt - Pop-up basin drain pipe, copper/stainless-steel/chrome pipe, PVC pipe, HDPE bottle
+Decor - black foam tape, rubber O-rings, gears/nut caps
+Connector for blade to hilt - ?? lightbulb screw on connectors? need 3 pins
