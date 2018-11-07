@@ -5,6 +5,7 @@ Assumption: The reader already knows how to use Arduino IDE, has some basic elec
 # A. Setup the IDE
 1.	Install Arduino IDE
 2.	Add ESP8266 Board Manager
+![Arduino Preferences](https://github.com/cohlinn/WemosProjects/blob/master/FlashESP01/howto01.png)
 3.	Detailed instructions on how to install Arduino IDE and how to include ESP8266 Board Manager, please refer to https://randomnerdtutorials.com/how-to-install-esp8266-board-arduino-ide/
 
 
@@ -39,29 +40,40 @@ Reset	| Reset
 
 You might need a breadboard to allow multiple connections to GND and 3.3V pins.
 
+![Wemos wired to ESP-01](https://github.com/cohlinn/WemosProjects/blob/master/FlashESP01/howto02.png)
+
 > Note 1: Slight difference from this tutorial to the Arduino Uno one, is that I also wired the Wemos's reset (RST) pin to the ESP-01 reset pin. It makes life easier when I do multiple updates during prototyping, because the Wemos board will automatically send the Reset signal prior to flashing the ESP-01. Before this, I used a jumper wire to act as my Reset switch to put the ESP-01 into "programming" mode, or a home-made board with reset button.
 
 > Note 2: The ESP-01 will not sit properly on the breadboard as shown here. The distance between the two rows are not wide enough. To overcome this, I built my own ESP-01 jig with a variable board, an 8-pin male and 8-pin female headers. I broke the 8-pin strip into 4-pin strips. This is what it looks like.
+![ESP-01 jig](https://github.com/cohlinn/WemosProjects/blob/master/FlashESP01/howto03.png)
 
 7.	Connect the Wemos to the computer with USB cable.
 
 # C. Setup Arduino IDE to flash ESP-01
 1.	Select Board as "Generic ESP8266 Module".
- 
+![Board manager](https://github.com/cohlinn/WemosProjects/blob/master/FlashESP01/howto04.png)
+
 2.	Select the flash size. If in doubt, pick the 512K (64K SPIFFS).
- 
+
+![Flash size](https://github.com/cohlinn/WemosProjects/blob/master/FlashESP01/howto05.png)
+
 > Note that there are different versions of ESP-01.
 
 > In general, the blue pcbs has 512KB memory (3a), and the black pcbs has 1 MB memory(3b). If in doubt, use the lower option 512KB . The black pcbs version can be flashed with the lower setting, you just would not get its full potential.
 
 3.	Set the upload speed to 115200.
- 
+
+![Upload speed](https://github.com/cohlinn/WemosProjects/blob/master/FlashESP01/howto06.png)
+
 4. Pick the COM port (USB port). 
+
+![USB COM Port](https://github.com/cohlinn/WemosProjects/blob/master/FlashESP01/howto07.png)
 
 >	If you have multiple COM ports listed like me, and you are not sure which one to use, unplug all your other USB devices, so that only the Wemos D1 Mini is plugged in via USB.
 
 5.	Load the code and flash
- 
+![Lock and load](https://github.com/cohlinn/WemosProjects/blob/master/FlashESP01/howto08.png)
+
 # D. Done.
 The example code is a modified Arduino sample Blink code. I had simply changed the output pin to GPIO-2 of the ESP-01 board.
 
