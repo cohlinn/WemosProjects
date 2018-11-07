@@ -5,21 +5,25 @@ Assumption: The reader already knows how to use Arduino IDE, has some basic elec
 # A. Setup the IDE
 1.	Install Arduino IDE
 2.	Add ESP8266 Board Manager
- 
-3.	Detailed instructions on how to install Arduino IDE and how to include ESP8266 Board Manager, please refere to https://randomnerdtutorials.com/how-to-install-esp8266-board-arduino-ide/.s
+3.	Detailed instructions on how to install Arduino IDE and how to include ESP8266 Board Manager, please refer to https://randomnerdtutorials.com/how-to-install-esp8266-board-arduino-ide/
 
 
-B. Wire up ESP-01 to Wemos
-⦁	How to connect the ESP8266 and Wemos D1 Mini.
-⦁	This is the ESP-01 pinout for your reference:
+# B. Wire up ESP-01 to Wemos
+1. How to connect the ESP8266 and Wemos D1 Mini.
+
+2. This is the ESP-01 pinout for your reference:
+![ESP8266 Pinout](https://cordobo.com/wp-content/uploads/esp8266_pinout.png)
  
-⦁	The idea is to wire up a circuit to convert the Wemos D1 mini into an USB-to-Serial converter which we then use to flash the ESP8266 with the new program from Arduino IDE.
-⦁	To do this, we make use of the Wemos' :
-⦁	RX and TX pins for communications
-⦁	3.3V and GND pins for power. Do not use the 5V pin. 
-ESP8266 is a 3.3V board. And the Wemos conveniently converted the 5V USB power to 3.3V for us.
-⦁	Connect the Wemos to the ESP-01 using the wiring scheme below.
-⦁	Wiring scheme:
+3.	The idea is to wire up a circuit to convert the Wemos D1 mini into an USB-to-Serial converter, which we then use to flash the ESP8266 with the new program from Arduino IDE.
+
+4.	To do this, we make use of the Wemos' :
+  -	RX and TX pins for communications
+  -	3.3V and GND pins for power. Do not use the 5V pin. 
+
+5. ESP8266 is a 3.3V board. And the Wemos conveniently converted the 5V USB power to 3.3V for us.
+
+6.	Connect the Wemos to the ESP-01 using the wiring scheme below.
+   Wiring scheme:
 Wemos D1 mini	 ESP8266 (ESP-01)
 RX 	 RX
 TX 	 TX 
