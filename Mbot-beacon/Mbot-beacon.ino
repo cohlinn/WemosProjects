@@ -20,10 +20,10 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and
 #define NEOPIXEL_PIN D1
 Adafruit_NeoPixel strip(BEACON_NEO_TOTAL, NEOPIXEL_PIN, NEO_RGB | NEO_KHZ800);
 
-int sonic_VCC = D5;
-int sonic_GND = D8;
+//int sonic_VCC = D5;
+//int sonic_GND = D8;
 
-int BEACON_RESET = A0;
+int BEACON_RESET = D8;
 
 int BEACON_DIST = 10; //max 10 cm to trigger
 int BEACON_TIME = 5000; //min to remain 5 sec
@@ -49,7 +49,7 @@ byte BEACON_OFF[3] = {0x00,0x00,0x00};
 int sonar_value = 0;
 int beacon_state = 0; //0 = not triggered, 1 = triggered, but less than 5 secs, 2 = completed beacon
 int beacon_timer = -1; // -1 = not started
-
+int beacon_active = 0;
 //---------------------------------------------------------------
 //SSID and Password of your WiFi router
 const char* ssid =  "The Prototyping Lab";
@@ -62,11 +62,11 @@ void setup() {
   Serial.begin(115200); // Open serial monitor at 115200 baud to see ping results.
   Serial.println("Starting up ....");
   strip.begin();
-  pinMode(sonic_VCC, OUTPUT);
-  pinMode(sonic_GND, OUTPUT);
+//  pinMode(sonic_VCC, OUTPUT);
+//  pinMode(sonic_GND, OUTPUT);
   pinMode(BEACON_RESET, INPUT);
-  digitalWrite(sonic_VCC, HIGH);
-  digitalWrite(sonic_GND, LOW);
+//  digitalWrite(sonic_VCC, HIGH);
+//  digitalWrite(sonic_GND, LOW);
   digitalWrite(BEACON_RESET, LOW);
 
   //WIFI code
@@ -79,7 +79,7 @@ void setup() {
   while (WiFi.status() != WL_CONNECTED) {
     setColor(pos, wifiblink[pos%2][0],wifiblink[pos%2][1],wifiblink[pos%2][2]);  //GRB
     strip.show();
-    delay(500);
+    delay(BEACON_INTERVAL);
     Serial.print(".");
     pos=(pos++) % BEACON_NEO_TOTAL;
     
@@ -183,11 +183,16 @@ void neopix()
   }
   else if(beacon_state == 2) //Completed
   {
-    /*
-    for(pos=0; pos<BEACON_NEO_TOTAL; pos++) //Turn on all
+    if(beacon_active == 0)
     {
-      setColor(pos,BEACON_COL[pos][1], BEACON_COL[pos][0], BEACON_COL[pos][2]);  //GRB
-    }*/
+      for(pos=0; pos<BEACON_NEO_TOTAL; pos++) //Turn on all
+      {
+        setColor(pos,BEACON_COL[pos][1], BEACON_COL[pos][0], BEACON_COL[pos][2]);  //GRB
+      }
+      strip.show();
+      beacon_active = 1;
+    }
+    delay(BEACON_INTERVAL);
     colorWipe(strip.Color(0x50, 0, 0), 50);  // Green
     colorOff();
   }
@@ -236,9 +241,13 @@ void colorOff() {
 }
 
 //--------------------------------
+int sonar_prev=0;
 void dist()
 {
+  sonar_prev=sonar_value;
   sonar_value = sonar.ping_cm();
+  if(sonar_value == 0)
+    sonar_value = sonar_prev;
   Serial.print("Ping: ");
   Serial.print(sonar_value); // Send ping, get distance in cm and print result (0 = outside set distance range)
   Serial.println(" cm");  
@@ -252,6 +261,7 @@ void beacon_reset()
 {
   beacon_state = 0;
   beacon_timer = -1;
+  beacon_active = 0;
 }
 
 //-----------------------------------------------------------
