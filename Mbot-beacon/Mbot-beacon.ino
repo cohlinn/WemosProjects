@@ -23,9 +23,9 @@ Adafruit_NeoPixel strip(BEACON_NEO_TOTAL, NEOPIXEL_PIN, NEO_RGB | NEO_KHZ800);
 int sonic_VCC = D5;
 int sonic_GND = D8;
 
-int BEACON_RESET = D3;
+int BEACON_RESET = A0;
 
-int BEACON_DIST = 5; //max 5 cm to trigger
+int BEACON_DIST = 10; //max 10 cm to trigger
 int BEACON_TIME = 5000; //min to remain 5 sec
 int BEACON_INTERVAL = 500;
 byte BEACON_COL [BEACON_NEO_TOTAL][3] = 
@@ -100,6 +100,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   yield();
+  server.handleClient();          //Handle client requests
 
   int isReset = digitalRead(BEACON_RESET);
   Serial.print("\nBEACON_RESET: ");
