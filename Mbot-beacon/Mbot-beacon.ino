@@ -1,6 +1,6 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-
+#include <ESP8266HTTPClient.h>
 //ESP Web Server Library to host a web page
 #include <ESP8266WebServer.h>
 #include "wifilist.h"
@@ -55,6 +55,10 @@ int beacon_active = 0;
 int maxWifiRetry = BEACON_NEO_TOTAL * 3;
 //Declare a global object variable from the ESP8266WebServer class.
 ESP8266WebServer server(80); //Server on port 80
+uint8_t macAddr[6];
+String beaconId;
+String baseStnURL = "http://192.168.1.100/dashboard/basestation/index.php?name=";
+String triggeredURL;
 
 void setup() {
   // put your setup code here, to run once:
@@ -83,15 +87,27 @@ void setup() {
     }
       //If connection not successful show SSID
       Serial.println("");
-      Serial.print("Faild to connect to ");
+      Serial.print("Failed to connect to ");
       Serial.println(wifi_ssid[i]);
   }
 
  
+  WiFi.softAPmacAddress(macAddr);
+  Serial.printf("MAC address = %02x:%02x:%02x:%02x:%02x:%02x\n", macAddr[0], macAddr[1], macAddr[2], macAddr[3], macAddr[4], macAddr[5]);
+  beaconId = String( String(macAddr[4],HEX) + String(macAddr[5],HEX) );
   server.on("/", handleRoot);      //Which routine to handle at root location. This is display page
+  server.on("/reset", []()        //Function to reset beacon
+  {
+    beacon_reset();
+    server.send(200, "text/plain", String("Resetted beacon " + beaconId));
+  });
 
   server.begin();                  //Start server
   Serial.println("HTTP server started");
+
+  //Prep for comms back to base
+  triggeredURL = String(baseStnURL + beaconId);
+  
 }
 
 void loop() {
@@ -131,11 +147,64 @@ void loop() {
   Serial.print("beacon_timer: ");
   Serial.println(beacon_timer);
 
+  if(beacon_state==2) //Beacon triggered
+  {
+    //send heartbeat to base
+    //triggeredURL
+    callBase();
+//    if(!callBase())
+//      ; //TODO: Do some exception hadndling
+  }
   neopix();
   
   
   delay(BEACON_INTERVAL);
 }
+
+
+boolean callBase()
+{
+  WiFiClient client;
+  HTTPClient http;
+  boolean success=false;
+
+  Serial.print("[HTTP] begin...\n");
+  if (http.begin(client, triggeredURL)) 
+  {  // HTTP call to base station
+    Serial.print("[HTTP] GET...\n");
+    // start connection and send HTTP header
+    int httpCode = http.GET();
+  
+    // httpCode will be negative on error
+    if (httpCode > 0)
+    {
+      // HTTP header has been send and Server response header has been handled
+      Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+    
+      // file found at server
+      if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY)
+      {
+        String payload = http.getString();
+        Serial.println(payload);
+        success=true;
+      }
+      else
+      {
+        Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+        success = false;
+      }
+  
+    http.end();
+    } 
+    else
+    {
+        Serial.printf("[HTTP} Unable to connect\n");
+        success = false;
+    }
+    return success;
+  }
+}
+
 
 boolean wifiConnect(int wifiAP)
 {
