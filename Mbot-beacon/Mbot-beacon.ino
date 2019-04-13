@@ -3,7 +3,7 @@
 
 //ESP Web Server Library to host a web page
 #include <ESP8266WebServer.h>
-
+#include "wifilist.h"
 
 #include <NewPing.h>
 #include <Adafruit_NeoPixel.h>
@@ -51,9 +51,8 @@ int beacon_state = 0; //0 = not triggered, 1 = triggered, but less than 5 secs, 
 int beacon_timer = -1; // -1 = not started
 int beacon_active = 0;
 //---------------------------------------------------------------
-//SSID and Password of your WiFi router
-const char* ssid =  "The Prototyping Lab";
-const char* password = "OMG188969";
+
+int maxWifiRetry = BEACON_NEO_TOTAL * 3;
 //Declare a global object variable from the ESP8266WebServer class.
 ESP8266WebServer server(80); //Server on port 80
 
@@ -69,27 +68,25 @@ void setup() {
 //  digitalWrite(sonic_GND, LOW);
   digitalWrite(BEACON_RESET, LOW);
 
-  //WIFI code
-  WiFi.mode(WIFI_STA); //WiFi mode station (connect to wifi router only
-  WiFi.begin(ssid, password);     //Connect to your WiFi router
+  for(int i=0; i<WIFI_SIZE; i++)
+  {
+    if(wifiConnect(i)) //can connect to AP
+    {
+        //If connection successful show IP address in serial monitor
+      Serial.println("");
+      Serial.print("Connected to ");
+      Serial.println(wifi_ssid[i]);
+      Serial.print("IP address: ");
+      Serial.println(WiFi.localIP());  //IP address assigned to your ESP
 
-  // Wait for connection
-  int pos=0;
-  byte wifiblink[2][3]={{0x50,0x00,0x50} , {0x50,0x50,0x00}};
-  while (WiFi.status() != WL_CONNECTED) {
-    setColor(pos, wifiblink[pos%2][0],wifiblink[pos%2][1],wifiblink[pos%2][2]);  //GRB
-    strip.show();
-    delay(BEACON_INTERVAL);
-    Serial.print(".");
-    pos=(pos++) % BEACON_NEO_TOTAL;
-    
+      break;
+    }
+      //If connection not successful show SSID
+      Serial.println("");
+      Serial.print("Faild to connect to ");
+      Serial.println(wifi_ssid[i]);
   }
-  //If connection successful show IP address in serial monitor
-  Serial.println("");
-  Serial.print("Connected to ");
-  Serial.println(ssid);
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());  //IP address assigned to your ESP
+
  
   server.on("/", handleRoot);      //Which routine to handle at root location. This is display page
 
@@ -140,6 +137,34 @@ void loop() {
   delay(BEACON_INTERVAL);
 }
 
+boolean wifiConnect(int wifiAP)
+{
+    //WIFI code
+  WiFi.mode(WIFI_STA); //WiFi mode station (connect to wifi router only
+  WiFi.begin(wifi_ssid[wifiAP], wifi_pwd[wifiAP]);     //Connect to your WiFi router
+
+  // Wait for connection
+  int pos=0;
+  byte wifiblink[2][3]={{0x50,0x00,0x50} , {0x50,0x50,0x00}};
+  while (WiFi.status() != WL_CONNECTED && pos < maxWifiRetry) {
+    for(int i=0; i<=(pos%BEACON_NEO_TOTAL); i++)
+    {
+      setColor(i, wifiblink[i%2][0],wifiblink[i%2][1],wifiblink[i%2][2]);  //GRB
+    }
+    for(int i=(pos%BEACON_NEO_TOTAL)+1; i<BEACON_NEO_TOTAL; i++)
+    {
+      setColor(i, 0,0,0);  //GRB
+    }
+    strip.show();
+    delay(BEACON_INTERVAL);
+    Serial.print(".");
+    pos++;
+    //pos=(pos) % BEACON_NEO_TOTAL;
+    
+  }
+  return (WiFi.status() == WL_CONNECTED);
+}
+//============================================================
 void neopix()
 {
   //Neopixel logic
@@ -242,12 +267,20 @@ void colorOff() {
 
 //--------------------------------
 int sonar_prev=0;
+int sonar_zeroes=0;
 void dist()
 {
   sonar_prev=sonar_value;
   sonar_value = sonar.ping_cm();
   if(sonar_value == 0)
-    sonar_value = sonar_prev;
+  {
+    sonar_zeroes++;
+    if(sonar_zeroes < 2)
+      sonar_value = sonar_prev;
+    else
+      sonar_value = 100;
+  }
+  else sonar_zeroes = 0;
   Serial.print("Ping: ");
   Serial.print(sonar_value); // Send ping, get distance in cm and print result (0 = outside set distance range)
   Serial.println(" cm");  
