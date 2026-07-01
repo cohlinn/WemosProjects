@@ -1,0 +1,4 @@
+Wemos D1 mini circuit
+G       --  Resistor    --  D8
+V3.3    --  Button      --  D8
+G       --  -LED+       --  D3
